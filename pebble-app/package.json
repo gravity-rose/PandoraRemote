@@ -1,0 +1,35 @@
+{
+  "name": "pandora-remote",
+  "author": "PandoraRemote",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "Pandora Remote",
+    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "sdkVersion": "3",
+    "enableMultiJS": false,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": {
+      "KEY_COMMAND": 0,
+      "KEY_STATION": 1,
+      "KEY_ARTIST": 2,
+      "KEY_SONG": 3,
+      "KEY_PLAY_STATE": 4
+    },
+    "capabilities": [],
+    "resources": {
+      "media": []
+    }
+  }
+}

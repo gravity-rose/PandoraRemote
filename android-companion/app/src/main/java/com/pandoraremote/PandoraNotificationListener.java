@@ -1,0 +1,136 @@
+package com.pandoraremote;
+
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.os.Bundle;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
+import android.util.Log;
+
+public class PandoraNotificationListener extends NotificationListenerService {
+
+    private static final String TAG = "PandoraNotifListener";
+    private static final String PANDORA_PACKAGE = "com.pandora.android";
+
+    private static PandoraNotificationListener sInstance;
+    private static Notification.Action sThumbsUp;
+    private static Notification.Action sThumbsDown;
+    private static Notification.Action sSkipNext;
+    private static Notification.Action sSkipPrev;
+    private static Notification.Action sPlayPause;
+
+    private static String sStation = "";
+    private static String sArtist = "";
+    private static String sSong = "";
+    private static boolean sIsPlaying = false;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sInstance = this;
+        Log.d(TAG, "NotificationListener created");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sInstance = null;
+    }
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn) {
+        if (!PANDORA_PACKAGE.equals(sbn.getPackageName())) return;
+
+        Notification notification = sbn.getNotification();
+        Bundle extras = notification.extras;
+
+        String title = extras.getString(Notification.EXTRA_TITLE, "");
+        String text = extras.getString(Notification.EXTRA_TEXT, "");
+        String subText = extras.getString(Notification.EXTRA_SUB_TEXT, "");
+
+        sSong = title;
+        sArtist = text;
+        sStation = subText;
+
+        Notification.Action[] actions = notification.actions;
+        if (actions != null) {
+            mapActions(actions);
+        }
+
+        sIsPlaying = (notification.flags & Notification.FLAG_ONGOING_EVENT) != 0;
+
+        Log.d(TAG, "Pandora update: " + sSong + " by " + sArtist + " on " + sStation);
+
+        PebbleCommService.sendMetadataToWatch(this, sStation, sArtist, sSong, sIsPlaying);
+    }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+        if (PANDORA_PACKAGE.equals(sbn.getPackageName())) {
+            sIsPlaying = false;
+        }
+    }
+
+    private void mapActions(Notification.Action[] actions) {
+        sThumbsUp = null;
+        sThumbsDown = null;
+        sSkipNext = null;
+        sSkipPrev = null;
+        sPlayPause = null;
+
+        for (Notification.Action action : actions) {
+            if (action.title == null) continue;
+            String label = action.title.toString().toLowerCase();
+
+            if (label.contains("thumb") && label.contains("up")) {
+                sThumbsUp = action;
+            } else if (label.contains("thumb") && label.contains("down")) {
+                sThumbsDown = action;
+            } else if (label.contains("skip") || label.contains("next")) {
+                sSkipNext = action;
+            } else if (label.contains("prev") || label.contains("back") || label.contains("rewind")) {
+                sSkipPrev = action;
+            } else if (label.contains("play") || label.contains("pause")) {
+                sPlayPause = action;
+            }
+        }
+    }
+
+    public static void fireThumbsUp() {
+        fireAction(sThumbsUp, "ThumbsUp");
+    }
+
+    public static void fireThumbsDown() {
+        fireAction(sThumbsDown, "ThumbsDown");
+    }
+
+    public static void fireSkipNext() {
+        fireAction(sSkipNext, "SkipNext");
+    }
+
+    public static void fireSkipPrev() {
+        fireAction(sSkipPrev, "SkipPrev");
+    }
+
+    public static void firePlayPause() {
+        fireAction(sPlayPause, "PlayPause");
+    }
+
+    private static void fireAction(Notification.Action action, String name) {
+        if (action == null) {
+            Log.w(TAG, name + " action not available");
+            return;
+        }
+        try {
+            action.actionIntent.send();
+            Log.d(TAG, "Fired " + name);
+        } catch (PendingIntent.CanceledException e) {
+            Log.e(TAG, "Failed to fire " + name, e);
+        }
+    }
+
+    public static String getStation() { return sStation; }
+    public static String getArtist() { return sArtist; }
+    public static String getSong() { return sSong; }
+    public static boolean isPlaying() { return sIsPlaying; }
+}

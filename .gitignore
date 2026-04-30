@@ -1,0 +1,15 @@
+# Pebble build output
+pebble-app/build/
+
+# Android build output
+android-companion/build/
+android-companion/app/build/
+android-companion/.gradle/
+android-companion/local.properties
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
