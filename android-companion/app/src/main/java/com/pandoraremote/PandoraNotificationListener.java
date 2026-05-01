@@ -2,10 +2,13 @@ package com.pandoraremote;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+
+import com.getpebble.android.kit.PebbleKit;
 
 public class PandoraNotificationListener extends NotificationListenerService {
 
@@ -23,6 +26,7 @@ public class PandoraNotificationListener extends NotificationListenerService {
     private static String sArtist = "";
     private static String sSong = "";
     private static boolean sIsPlaying = false;
+    private static boolean sWatchAppLaunched = false;
 
     @Override
     public void onCreate() {
@@ -61,6 +65,17 @@ public class PandoraNotificationListener extends NotificationListenerService {
 
         Log.d(TAG, "Pandora update: " + sSong + " by " + sArtist + " on " + sStation);
 
+        if (!sWatchAppLaunched) {
+            sWatchAppLaunched = true;
+            startService(new Intent(this, PebbleCommService.class));
+            try {
+                PebbleKit.startAppOnPebble(this, PebbleCommService.WATCHAPP_UUID);
+                Log.d(TAG, "Launched watch app from Pandora notification");
+            } catch (SecurityException e) {
+                Log.w(TAG, "Could not launch watch app: " + e.getMessage());
+            }
+        }
+
         PebbleCommService.sendMetadataToWatch(this, sStation, sArtist, sSong, sIsPlaying);
     }
 
@@ -68,6 +83,7 @@ public class PandoraNotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
         if (PANDORA_PACKAGE.equals(sbn.getPackageName())) {
             sIsPlaying = false;
+            sWatchAppLaunched = false;
         }
     }
 

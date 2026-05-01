@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PandoraRemote</string>
+    <string name="setup_title">Setup Required</string>
+    <string name="setup_explanation">PandoraRemote needs Notification Access to read Pandora\'s playback notifications. This is how we detect the current song, artist, and station to display on your Pebble watch.</string>
+    <string name="setup_instructions">To enable it:\n1. Tap the button below\n2. Find \"PandoraRemote\" in the list\n3. Toggle it on</string>
+    <string name="privacy_notice">Privacy: This app collects no data. Notification content is only used locally to forward song information to your Pebble watch. Nothing is stored, shared, or sent to any server.</string>
+    <string name="about_text">PandoraRemote Companion\nby Marc Passy\n\nVersion %s\n\nPandoraRemote lets you control Pandora Internet Radio from your Pebble smartwatch. Skip tracks, thumbs up or down, pause and play — all from your wrist.\n\nThe companion app bridges Pandora\'s Android notifications to your Pebble, forwarding song info and relaying your commands back.\n\nNo data is collected, stored, or transmitted to any server.</string>
 </resources>

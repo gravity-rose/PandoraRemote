@@ -3,6 +3,7 @@ package com.pandoraremote;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -14,7 +15,8 @@ import java.util.UUID;
 public class PebbleCommService extends Service {
 
     private static final String TAG = "PebbleCommService";
-    private static final UUID WATCHAPP_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    static final UUID WATCHAPP_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    private static final String PANDORA_PACKAGE = "com.pandora.android";
 
     private static final int KEY_COMMAND = 0;
     private static final int KEY_STATION = 1;
@@ -34,7 +36,11 @@ public class PebbleCommService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        registerPebbleReceiver();
+        try {
+            registerPebbleReceiver();
+        } catch (SecurityException e) {
+            Log.w(TAG, "PebbleKit receiver registration failed (API 34+ restriction): " + e.getMessage());
+        }
         Log.d(TAG, "PebbleCommService started");
     }
 
@@ -86,6 +92,7 @@ public class PebbleCommService extends Service {
                         PandoraNotificationListener.firePlayPause();
                         break;
                     case CMD_REQUEST_INFO:
+                        launchPandoraIfNeeded(context);
                         sendMetadataToWatch(context,
                             PandoraNotificationListener.getStation(),
                             PandoraNotificationListener.getArtist(),
@@ -96,6 +103,19 @@ public class PebbleCommService extends Service {
             }
         };
         PebbleKit.registerReceivedDataHandler(this, mDataReceiver);
+    }
+
+    private void launchPandoraIfNeeded(Context context) {
+        if (PandoraNotificationListener.isPlaying()) return;
+        PackageManager pm = context.getPackageManager();
+        Intent launchIntent = pm.getLaunchIntentForPackage(PANDORA_PACKAGE);
+        if (launchIntent != null) {
+            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(launchIntent);
+            Log.d(TAG, "Launched Pandora from watch request");
+        } else {
+            Log.w(TAG, "Pandora not installed");
+        }
     }
 
     public static void sendMetadataToWatch(Context context, String station, String artist, String song, boolean isPlaying) {
