@@ -34,6 +34,12 @@
       "media": [
         {
           "type": "png",
+          "name": "IMAGE_MENU_ICON",
+          "file": "images/icon_menu.png",
+          "menuIcon": true
+        },
+        {
+          "type": "png",
           "name": "ICON_THUMBS_UP",
           "file": "images/icon_thumbs_up.png"
         },

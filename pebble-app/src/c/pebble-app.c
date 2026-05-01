@@ -108,6 +108,7 @@ static TextLayer *s_about_header_layer;
 static TextLayer *s_about_title_layer;
 static TextLayer *s_about_dev_layer;
 static TextLayer *s_about_ver_layer;
+static TextLayer *s_about_copyright_layer;
 static AppTimer *s_about_timer;
 
 static void about_dismiss(void) {
@@ -148,12 +149,19 @@ static void about_window_load(Window *window) {
   style_text_layer(s_about_dev_layer);
   layer_add_child(root, text_layer_get_layer(s_about_dev_layer));
 
-  s_about_ver_layer = text_layer_create(GRect(0, 120, bounds.size.w, 24));
+  s_about_ver_layer = text_layer_create(GRect(0, 108, bounds.size.w, 24));
   text_layer_set_font(s_about_ver_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_text_alignment(s_about_ver_layer, GTextAlignmentCenter);
   text_layer_set_text(s_about_ver_layer, "v" APP_VERSION);
   style_text_layer(s_about_ver_layer);
   layer_add_child(root, text_layer_get_layer(s_about_ver_layer));
+
+  s_about_copyright_layer = text_layer_create(GRect(2, 132, bounds.size.w - 4, 36));
+  text_layer_set_font(s_about_copyright_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(s_about_copyright_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_about_copyright_layer, "Pandora is a trademark\nof Pandora Media, LLC");
+  style_text_layer(s_about_copyright_layer);
+  layer_add_child(root, text_layer_get_layer(s_about_copyright_layer));
 
   s_about_timer = app_timer_register(10000, about_timer_callback, NULL);
 }
@@ -167,6 +175,7 @@ static void about_window_unload(Window *window) {
   text_layer_destroy(s_about_title_layer);
   text_layer_destroy(s_about_dev_layer);
   text_layer_destroy(s_about_ver_layer);
+  text_layer_destroy(s_about_copyright_layer);
   window_destroy(s_about_window);
   s_about_window = NULL;
 }
