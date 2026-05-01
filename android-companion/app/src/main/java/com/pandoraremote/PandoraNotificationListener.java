@@ -42,9 +42,24 @@ public class PandoraNotificationListener extends NotificationListenerService {
     }
 
     @Override
+    public void onListenerConnected() {
+        Log.d(TAG, "Listener connected, checking active notifications");
+        for (StatusBarNotification sbn : getActiveNotifications()) {
+            if (PANDORA_PACKAGE.equals(sbn.getPackageName())) {
+                Log.d(TAG, "Found existing Pandora notification");
+                processNotification(sbn);
+                break;
+            }
+        }
+    }
+
+    @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (!PANDORA_PACKAGE.equals(sbn.getPackageName())) return;
+        processNotification(sbn);
+    }
 
+    private void processNotification(StatusBarNotification sbn) {
         Notification notification = sbn.getNotification();
         Bundle extras = notification.extras;
 
@@ -63,7 +78,13 @@ public class PandoraNotificationListener extends NotificationListenerService {
 
         sIsPlaying = (notification.flags & Notification.FLAG_ONGOING_EVENT) != 0;
 
-        Log.d(TAG, "Pandora update: " + sSong + " by " + sArtist + " on " + sStation);
+        Log.d(TAG, "Pandora update: " + sSong + " by " + sArtist + " on " + sStation
+                + " playing=" + sIsPlaying
+                + " [actions: " + (actions != null ? actions.length : 0) + "]");
+
+        if (!sIsPlaying || (title.isEmpty() && text.isEmpty())) {
+            return;
+        }
 
         if (!sWatchAppLaunched) {
             sWatchAppLaunched = true;
@@ -97,6 +118,7 @@ public class PandoraNotificationListener extends NotificationListenerService {
         for (Notification.Action action : actions) {
             if (action.title == null) continue;
             String label = action.title.toString().toLowerCase();
+            Log.d(TAG, "  Action label: \"" + label + "\"");
 
             if (label.contains("thumb") && label.contains("up")) {
                 sThumbsUp = action;
@@ -104,7 +126,7 @@ public class PandoraNotificationListener extends NotificationListenerService {
                 sThumbsDown = action;
             } else if (label.contains("skip") || label.contains("next")) {
                 sSkipNext = action;
-            } else if (label.contains("prev") || label.contains("back") || label.contains("rewind")) {
+            } else if (label.contains("replay") || label.contains("prev") || label.contains("back") || label.contains("rewind")) {
                 sSkipPrev = action;
             } else if (label.contains("play") || label.contains("pause")) {
                 sPlayPause = action;
