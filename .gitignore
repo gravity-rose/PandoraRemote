@@ -10,6 +10,13 @@ android-companion/app/build/
 android-companion/.gradle/
 android-companion/local.properties
 
+# Companion emulator
+companion-emulator/.venv/
+companion-emulator/src/*.egg-info/
+companion-emulator/dist/
+__pycache__/
+*.pyc
+
 # IDE
 .idea/
 *.iml

@@ -10,6 +10,7 @@
 #define CMD_REQUEST_INFO 6
 
 static Window *s_main_window;
+static TextLayer *s_header_layer;
 static TextLayer *s_station_layer;
 static TextLayer *s_artist_layer;
 static TextLayer *s_song_layer;
@@ -103,6 +104,7 @@ static void style_text_layer(TextLayer *layer) {
 }
 
 static Window *s_about_window;
+static TextLayer *s_about_header_layer;
 static TextLayer *s_about_title_layer;
 static TextLayer *s_about_dev_layer;
 static TextLayer *s_about_ver_layer;
@@ -125,7 +127,14 @@ static void about_window_load(Window *window) {
   window_set_background_color(window, GColorVividCerulean);
 #endif
 
-  s_about_title_layer = text_layer_create(GRect(0, 20, bounds.size.w, 36));
+  s_about_header_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
+  text_layer_set_font(s_about_header_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  text_layer_set_text_alignment(s_about_header_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_about_header_layer, "PandoraRemote");
+  style_text_layer(s_about_header_layer);
+  layer_add_child(root, text_layer_get_layer(s_about_header_layer));
+
+  s_about_title_layer = text_layer_create(GRect(0, 30, bounds.size.w, 36));
   text_layer_set_font(s_about_title_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(s_about_title_layer, GTextAlignmentCenter);
   text_layer_set_text(s_about_title_layer, "Pandora Remote");
@@ -154,6 +163,7 @@ static void about_window_unload(Window *window) {
     app_timer_cancel(s_about_timer);
     s_about_timer = NULL;
   }
+  text_layer_destroy(s_about_header_layer);
   text_layer_destroy(s_about_title_layer);
   text_layer_destroy(s_about_dev_layer);
   text_layer_destroy(s_about_ver_layer);
@@ -231,21 +241,32 @@ static void window_load(Window *window) {
   window_set_background_color(window, GColorVividCerulean);
 #endif
 
-  s_station_layer = text_layer_create(GRect(0, 0, bounds.size.w - 34, 28));
+  int inset_y = PBL_IF_ROUND_ELSE(22, 0);
+  int inset_x = PBL_IF_ROUND_ELSE(20, 4);
+  int text_w = bounds.size.w - inset_x * 2 - 30;
+
+  s_header_layer = text_layer_create(GRect(inset_x, inset_y, text_w, 20));
+  text_layer_set_font(s_header_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  text_layer_set_text_alignment(s_header_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_header_layer, "PandoraRemote");
+  style_text_layer(s_header_layer);
+  layer_add_child(root, text_layer_get_layer(s_header_layer));
+
+  s_station_layer = text_layer_create(GRect(inset_x, inset_y + 20, text_w, 24));
   text_layer_set_font(s_station_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_station_layer, GTextAlignmentCenter);
   text_layer_set_text(s_station_layer, "Connecting...");
   style_text_layer(s_station_layer);
   layer_add_child(root, text_layer_get_layer(s_station_layer));
 
-  s_artist_layer = text_layer_create(GRect(4, 40, bounds.size.w - 38, 50));
+  s_artist_layer = text_layer_create(GRect(inset_x, inset_y + 48, text_w, 46));
   text_layer_set_font(s_artist_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(s_artist_layer, GTextAlignmentCenter);
   text_layer_set_text(s_artist_layer, "");
   style_text_layer(s_artist_layer);
   layer_add_child(root, text_layer_get_layer(s_artist_layer));
 
-  s_song_layer = text_layer_create(GRect(4, 90, bounds.size.w - 38, 50));
+  s_song_layer = text_layer_create(GRect(inset_x, inset_y + 94, text_w, 46));
   text_layer_set_font(s_song_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_text_alignment(s_song_layer, GTextAlignmentCenter);
   text_layer_set_text(s_song_layer, "");
@@ -254,10 +275,21 @@ static void window_load(Window *window) {
 
   int btn_w = 30;
   int btn_x = bounds.size.w - btn_w;
+  int icon_size = 20;
+  int btn_mid_y = bounds.size.h / 2 - icon_size / 2;
+  int btn_spacing = PBL_IF_ROUND_ELSE(bounds.size.h / 4, bounds.size.h / 3);
+  int btn_up_y = btn_mid_y - btn_spacing;
+  int btn_down_y = btn_mid_y + btn_spacing;
+  int btn_up_x = btn_x + 5;
+  int btn_down_x = btn_x + 5;
+#ifdef PBL_ROUND
+  btn_up_x -= 12;
+  btn_down_x -= 12;
+#endif
 
   s_icon_thumbs_up = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_UP);
   s_icon_next = gbitmap_create_with_resource(RESOURCE_ID_ICON_NEXT);
-  s_bmp_up_layer = bitmap_layer_create(GRect(btn_x + 5, 15, 20, 20));
+  s_bmp_up_layer = bitmap_layer_create(GRect(btn_up_x, btn_up_y, icon_size, icon_size));
   bitmap_layer_set_compositing_mode(s_bmp_up_layer, GCompOpSet);
   bitmap_layer_set_background_color(s_bmp_up_layer, GColorClear);
   bitmap_layer_set_bitmap(s_bmp_up_layer, s_icon_thumbs_up);
@@ -267,7 +299,7 @@ static void window_load(Window *window) {
   s_icon_play = gbitmap_create_with_resource(RESOURCE_ID_ICON_PLAY);
   s_icon_pause = gbitmap_create_with_resource(RESOURCE_ID_ICON_PAUSE);
   s_icon_ellipsis = gbitmap_create_with_resource(RESOURCE_ID_ICON_ELLIPSIS);
-  s_bmp_sel_layer = bitmap_layer_create(GRect(btn_x + 5, 74, 20, 20));
+  s_bmp_sel_layer = bitmap_layer_create(GRect(btn_x + 5, btn_mid_y, icon_size, icon_size));
   bitmap_layer_set_compositing_mode(s_bmp_sel_layer, GCompOpSet);
   bitmap_layer_set_background_color(s_bmp_sel_layer, GColorClear);
   bitmap_layer_set_bitmap(s_bmp_sel_layer, s_icon_ellipsis);
@@ -276,7 +308,7 @@ static void window_load(Window *window) {
 
   s_icon_thumbs_down = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_DOWN);
   s_icon_prev = gbitmap_create_with_resource(RESOURCE_ID_ICON_PREV);
-  s_bmp_down_layer = bitmap_layer_create(GRect(btn_x + 5, 133, 20, 20));
+  s_bmp_down_layer = bitmap_layer_create(GRect(btn_down_x, btn_down_y, icon_size, icon_size));
   bitmap_layer_set_compositing_mode(s_bmp_down_layer, GCompOpSet);
   bitmap_layer_set_background_color(s_bmp_down_layer, GColorClear);
   bitmap_layer_set_bitmap(s_bmp_down_layer, s_icon_thumbs_down);
@@ -285,6 +317,7 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
+  text_layer_destroy(s_header_layer);
   text_layer_destroy(s_station_layer);
   text_layer_destroy(s_artist_layer);
   text_layer_destroy(s_song_layer);
