@@ -9,6 +9,8 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import com.getpebble.android.kit.PebbleKit;
+import io.rebble.pebblekit2.client.java.DefaultJavaPebbleSender;
+import io.rebble.pebblekit2.client.java.JavaPebbleSender;
 
 public class PandoraNotificationListener extends NotificationListenerService {
 
@@ -82,19 +84,10 @@ public class PandoraNotificationListener extends NotificationListenerService {
                 + " playing=" + sIsPlaying
                 + " [actions: " + (actions != null ? actions.length : 0) + "]");
 
-        if (!sIsPlaying || (title.isEmpty() && text.isEmpty())) {
-            return;
-        }
-
         if (!sWatchAppLaunched) {
             sWatchAppLaunched = true;
             startService(new Intent(this, PebbleCommService.class));
-            try {
-                PebbleKit.startAppOnPebble(this, PebbleCommService.WATCHAPP_UUID);
-                Log.d(TAG, "Launched watch app from Pandora notification");
-            } catch (SecurityException e) {
-                Log.w(TAG, "Could not launch watch app: " + e.getMessage());
-            }
+            launchWatchApp();
         }
 
         PebbleCommService.sendMetadataToWatch(this, sStation, sArtist, sSong, sIsPlaying);
@@ -131,6 +124,18 @@ public class PandoraNotificationListener extends NotificationListenerService {
             } else if (label.contains("play") || label.contains("pause")) {
                 sPlayPause = action;
             }
+        }
+    }
+
+    private void launchWatchApp() {
+        try {
+            JavaPebbleSender sender = new DefaultJavaPebbleSender(this);
+            sender.startAppOnTheWatch(PebbleCommService.WATCHAPP_UUID, result -> {
+                Log.d(TAG, "startAppOnTheWatch result: " + result);
+            });
+            Log.d(TAG, "Sent PebbleKit2 startAppOnTheWatch");
+        } catch (Exception e) {
+            Log.w(TAG, "PebbleKit2 startAppOnTheWatch failed: " + e.getMessage());
         }
     }
 

@@ -3,7 +3,10 @@ package com.pandoraremote;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -30,17 +33,15 @@ public class PebbleCommService extends Service {
     private static final int CMD_PREVIOUS = 4;
     private static final int CMD_PLAY_PAUSE = 5;
     private static final int CMD_REQUEST_INFO = 6;
+    private static final int CMD_VOLUME_UP = 7;
+    private static final int CMD_VOLUME_DOWN = 8;
 
     private PebbleKit.PebbleDataReceiver mDataReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        try {
-            registerPebbleReceiver();
-        } catch (SecurityException e) {
-            Log.w(TAG, "PebbleKit receiver registration failed (API 34+ restriction): " + e.getMessage());
-        }
+        registerPebbleReceiver();
         Log.d(TAG, "PebbleCommService started");
     }
 
@@ -99,10 +100,31 @@ public class PebbleCommService extends Service {
                             PandoraNotificationListener.getSong(),
                             PandoraNotificationListener.isPlaying());
                         break;
+                    case CMD_VOLUME_UP:
+                        adjustVolume(context, AudioManager.ADJUST_RAISE);
+                        break;
+                    case CMD_VOLUME_DOWN:
+                        adjustVolume(context, AudioManager.ADJUST_LOWER);
+                        break;
                 }
             }
         };
-        PebbleKit.registerReceivedDataHandler(this, mDataReceiver);
+
+        IntentFilter filter = new IntentFilter("com.getpebble.action.app.RECEIVE");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mDataReceiver, filter, Context.RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(mDataReceiver, filter);
+        }
+        Log.d(TAG, "Registered PebbleDataReceiver with RECEIVER_EXPORTED");
+    }
+
+    private void adjustVolume(Context context, int direction) {
+        AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if (audio != null) {
+            audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0);
+            Log.d(TAG, "Volume adjusted: " + (direction == AudioManager.ADJUST_RAISE ? "up" : "down"));
+        }
     }
 
     private void launchPandoraIfNeeded(Context context) {

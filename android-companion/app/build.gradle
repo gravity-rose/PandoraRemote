@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace 'com.pandoraremote'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.pandoraremote"
-        minSdk 21
+        minSdk 24
         targetSdk 34
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 4
+        versionName "1.1.2"
     }
 
     buildTypes {
@@ -20,12 +21,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 dependencies {
     implementation 'com.getpebble:pebblekit:4.0.1'
+    implementation 'io.rebble.pebblekit2:client-java:0.1.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
 }
