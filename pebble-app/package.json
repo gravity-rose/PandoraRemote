@@ -2,7 +2,9 @@
   "name": "pandora-remote",
   "author": "PandoraRemote",
   "version": "1.0.0",
-  "keywords": ["pebble-app"],
+  "keywords": [
+    "pebble-app"
+  ],
   "private": true,
   "dependencies": {},
   "pebble": {
@@ -29,7 +31,43 @@
     },
     "capabilities": [],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "png",
+          "name": "ICON_THUMBS_UP",
+          "file": "images/icon_thumbs_up.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_THUMBS_DOWN",
+          "file": "images/icon_thumbs_down.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_NEXT",
+          "file": "images/icon_next.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_PREV",
+          "file": "images/icon_rev.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_PLAY",
+          "file": "images/icon_play.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_PAUSE",
+          "file": "images/icon_pause.png"
+        },
+        {
+          "type": "png",
+          "name": "ICON_ELLIPSIS",
+          "file": "images/icon_ellipsis.png"
+        }
+      ]
     }
   }
 }

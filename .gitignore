@@ -1,5 +1,8 @@
 # Pebble build output
 pebble-app/build/
+pebble-app/node_modules/
+pebble-app/package-lock.json
+pebble-app/.lock-waf*
 
 # Android build output
 android-companion/build/
