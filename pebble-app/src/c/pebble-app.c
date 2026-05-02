@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-#define APP_VERSION "1.2.0"
+#define APP_VERSION "1.3.0"
 
 #define CMD_THUMBS_UP    1
 #define CMD_THUMBS_DOWN  2
@@ -298,8 +298,8 @@ static void relayout(Layer *root) {
 
   layer_set_frame(text_layer_get_layer(s_header_layer), GRect(inset_x, inset_y, text_w, 20));
   layer_set_frame(text_layer_get_layer(s_station_layer), GRect(inset_x, inset_y + 20, text_w, 24));
-  layer_set_frame(text_layer_get_layer(s_artist_layer), GRect(inset_x, inset_y + 48, text_w, 46));
-  layer_set_frame(text_layer_get_layer(s_song_layer), GRect(inset_x, inset_y + 94, text_w, content_h - 94));
+  layer_set_frame(text_layer_get_layer(s_artist_layer), GRect(inset_x, inset_y + 44, text_w, 64));
+  layer_set_frame(text_layer_get_layer(s_song_layer), GRect(inset_x, inset_y + 108, text_w, content_h - 108));
 
   int btn_w = 30;
   int btn_x = bounds.size.w - btn_w;
@@ -320,9 +320,11 @@ static void relayout(Layer *root) {
   layer_set_frame(bitmap_layer_get_layer(s_bmp_down_layer), GRect(btn_down_x, btn_down_y, icon_size, icon_size));
 }
 
+#ifndef PBL_PLATFORM_APLITE
 static void unobstructed_change_handler(AnimationProgress progress, void *context) {
   relayout(window_get_root_layer(s_main_window));
 }
+#endif
 
 static void window_load(Window *window) {
   Layer *root = window_get_root_layer(window);
@@ -350,16 +352,18 @@ static void window_load(Window *window) {
   style_text_layer(s_station_layer);
   layer_add_child(root, text_layer_get_layer(s_station_layer));
 
-  s_artist_layer = text_layer_create(GRect(inset_x, inset_y + 48, text_w, 46));
-  text_layer_set_font(s_artist_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+  s_artist_layer = text_layer_create(GRect(inset_x, inset_y + 44, text_w, 64));
+  text_layer_set_font(s_artist_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(s_artist_layer, GTextAlignmentCenter);
+  text_layer_set_overflow_mode(s_artist_layer, GTextOverflowModeWordWrap);
   text_layer_set_text(s_artist_layer, "");
   style_text_layer(s_artist_layer);
   layer_add_child(root, text_layer_get_layer(s_artist_layer));
 
-  s_song_layer = text_layer_create(GRect(inset_x, inset_y + 94, text_w, 46));
-  text_layer_set_font(s_song_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  s_song_layer = text_layer_create(GRect(inset_x, inset_y + 108, text_w, 56));
+  text_layer_set_font(s_song_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(s_song_layer, GTextAlignmentCenter);
+  text_layer_set_overflow_mode(s_song_layer, GTextOverflowModeWordWrap);
   text_layer_set_text(s_song_layer, "");
   style_text_layer(s_song_layer);
   layer_add_child(root, text_layer_get_layer(s_song_layer));
@@ -396,14 +400,18 @@ static void window_load(Window *window) {
   relayout(root);
   update_btn_labels();
 
+#ifndef PBL_PLATFORM_APLITE
   UnobstructedAreaHandlers ua_handlers = {
     .change = unobstructed_change_handler,
   };
   unobstructed_area_service_subscribe(ua_handlers, NULL);
+#endif
 }
 
 static void window_unload(Window *window) {
+#ifndef PBL_PLATFORM_APLITE
   unobstructed_area_service_unsubscribe();
+#endif
   text_layer_destroy(s_header_layer);
   text_layer_destroy(s_station_layer);
   text_layer_destroy(s_artist_layer);
