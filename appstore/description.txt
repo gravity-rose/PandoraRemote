@@ -19,8 +19,9 @@ Volume: Turn the volume up or down on your phone.
 
 SETUP
 
-1. Install the PandoraRemote companion app on your Android phone.
-2. Grant notification access to PandoraRemote in your phone's settings.
+1. Install the PandoraRemote companion app on your Android phone. Until the app is available on the Google Play Store, download the APK from:
+   https://github.com/gravity-rose/PandoraRemote/releases/download/v1.4.0/PandoraRemote-1.4.0.apk
+2. After sideloading, you must grant the app restricted permissions and notification access. The app will walk you through this on first launch.
 3. Start Pandora — the watch app launches automatically.
 
 DISCLAIMER

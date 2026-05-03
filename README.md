@@ -54,8 +54,8 @@ The original Pebble (Aplite) is not supported.
 
 ## Setup
 
-1. Install the Android companion APK on your phone
-2. Grant notification access to PandoraRemote in **Settings > Apps > Special app access > Notification access**
+1. Install the Android companion APK on your phone. Until the app is available on Google Play, download it from the [latest release](https://github.com/gravity-rose/PandoraRemote/releases/download/v1.4.0/PandoraRemote-1.4.0.apk)
+2. After sideloading, grant the app restricted permissions and notification access. The app will walk you through this on first launch
 3. Sideload the PBW onto your Pebble watch
 4. Start Pandora on your phone — the watch app launches automatically
 
