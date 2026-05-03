@@ -1,0 +1,25 @@
+{
+  "name": "Pandora Remote",
+  "author": "gravity_rose",
+  "version": "1.4.0",
+  "category": "Remotes",
+  "shortDescription": "Control Pandora from your Pebble watch — skip, rate, and adjust volume.",
+  "platforms": [
+    "basalt",
+    "chalk",
+    "diorite",
+    "emery",
+    "flint",
+    "gabbro"
+  ],
+  "screenshots": [
+    "screenshots/screen_playback.png",
+    "screenshots/screen_rating.png",
+    "screenshots/screen_volume.png",
+    "screenshots/screen_about.png"
+  ],
+  "companionApp": {
+    "platform": "android",
+    "required": true
+  }
+}

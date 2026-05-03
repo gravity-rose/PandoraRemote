@@ -1,0 +1,28 @@
+Control Pandora from your wrist. PandoraRemote lets you manage playback, rate songs, and adjust volume directly from your Pebble watch.
+
+FEATURES
+
+- Skip tracks, play/pause with a single button press
+- Thumbs up or thumbs down the current song
+- Adjust phone volume from your watch
+- See the current song, artist, and station on your watch
+- Auto-launches when Pandora starts playing
+- Works on all Pebble hardware (Time, Time Steel, Time Round, Pebble 2, Time 2, Core 2 Duo, Core Time)
+
+HOW IT WORKS
+
+PandoraRemote has three screens you cycle through with the select button:
+
+Playback: Skip to the next track or play/pause.
+Rating: Thumbs up or thumbs down the current song.
+Volume: Turn the volume up or down on your phone.
+
+SETUP
+
+1. Install the PandoraRemote companion app on your Android phone.
+2. Grant notification access to PandoraRemote in your phone's settings.
+3. Start Pandora — the watch app launches automatically.
+
+DISCLAIMER
+
+Pandora is a registered trademark of Pandora Media, LLC. PandoraRemote is an independent project and is not affiliated with, endorsed by, or sponsored by Pandora Media, LLC.
