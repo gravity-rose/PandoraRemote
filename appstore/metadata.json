@@ -12,8 +12,13 @@
     "flint",
     "gabbro"
   ],
+  "icons": {
+    "small": "icon_80x80.png",
+    "large": "icon_144x144.png"
+  },
   "screenshots": [
     "screenshots/screen_playback.png",
+    "screenshots/screen_playback_round.png",
     "screenshots/screen_rating.png",
     "screenshots/screen_volume.png",
     "screenshots/screen_about.png"

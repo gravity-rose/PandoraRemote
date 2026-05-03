@@ -214,7 +214,7 @@ static void about_window_load(Window *window) {
   s_about_dev_layer = text_layer_create(GRect(inset, h * 39 / 100, w - inset * 2, 40));
   text_layer_set_font(s_about_dev_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_text_alignment(s_about_dev_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_about_dev_layer, "Developed by\nA. Marc Passy");
+  text_layer_set_text(s_about_dev_layer, "Developed by\ngravity_rose");
   style_text_layer(s_about_dev_layer);
   layer_add_child(root, text_layer_get_layer(s_about_dev_layer));
 
