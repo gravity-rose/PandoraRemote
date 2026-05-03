@@ -78,7 +78,11 @@ public class PandoraNotificationListener extends NotificationListenerService {
             mapActions(actions);
         }
 
-        sIsPlaying = (notification.flags & Notification.FLAG_ONGOING_EVENT) != 0;
+        // Detect play state from the play/pause action label
+        if (sPlayPause != null && sPlayPause.title != null) {
+            String label = sPlayPause.title.toString().toLowerCase();
+            sIsPlaying = label.contains("pause");
+        }
 
         Log.d(TAG, "Pandora update: " + sSong + " by " + sArtist + " on " + sStation
                 + " playing=" + sIsPlaying
