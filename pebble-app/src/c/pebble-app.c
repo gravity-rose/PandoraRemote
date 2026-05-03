@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-#define APP_VERSION "1.5.0"
+#define APP_VERSION "1.5.1"
 
 #define CMD_THUMBS_UP    1
 #define CMD_THUMBS_DOWN  2
@@ -128,8 +128,6 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   nudge_icon(s_bmp_down_layer);
   if (s_current_screen == 0) {
     send_command(CMD_PLAY_PAUSE);
-    s_is_playing = !s_is_playing;
-    bitmap_layer_set_bitmap(s_bmp_down_layer, s_is_playing ? s_icon_pause : s_icon_play);
   } else if (s_current_screen == 1) {
     send_command(CMD_THUMBS_DOWN);
     reset_screen_timer();
