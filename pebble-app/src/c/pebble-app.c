@@ -28,6 +28,7 @@ static GBitmap *s_icon_vol_down;
 static BitmapLayer *s_bmp_up_layer;
 static BitmapLayer *s_bmp_sel_layer;
 static BitmapLayer *s_bmp_down_layer;
+static Layer *s_btn_bar_layer;
 
 static int s_current_screen = 0;
 static bool s_is_playing = false;
@@ -288,6 +289,29 @@ static void outbox_failed_handler(DictionaryIterator *iter, AppMessageResult rea
   APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed: %d", reason);
 }
 
+static void btn_bar_draw(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+#ifdef PBL_ROUND
+  GRect frame = layer_get_frame(layer);
+  int scr_h = frame.origin.y + bounds.size.h;
+  int center_y = scr_h / 2 - frame.origin.y;
+  int half_h = scr_h / 2;
+  int bar_w = bounds.size.w / 2;
+  int max_extend = bounds.size.w - bar_w;
+  for (int y = 0; y < bounds.size.h; y++) {
+    int dy = y - center_y;
+    // Narrowest at center, wider at top/bottom
+    int extend = (int)((long)dy * dy * max_extend / ((long)half_h * half_h));
+    if (extend > max_extend) extend = max_extend;
+    int left = max_extend - extend;
+    graphics_fill_rect(ctx, GRect(left, y, bounds.size.w - left, 1), 0, GCornerNone);
+  }
+#else
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+#endif
+}
+
 static void relayout(Layer *root) {
   GRect bounds = layer_get_unobstructed_bounds(root);
 
@@ -305,19 +329,24 @@ static void relayout(Layer *root) {
   int btn_x = bounds.size.w - btn_w;
   int icon_size = 20;
   int btn_mid_y = bounds.size.h / 2 - icon_size / 2;
-  int btn_spacing = PBL_IF_ROUND_ELSE(bounds.size.h / 4, bounds.size.h / 3);
+  int btn_spacing = PBL_IF_ROUND_ELSE(bounds.size.h / 5, bounds.size.h / 3);
   int btn_up_y = btn_mid_y - btn_spacing;
   int btn_down_y = btn_mid_y + btn_spacing;
-  int btn_up_x = btn_x + 5;
-  int btn_down_x = btn_x + 5;
+  int icon_x = btn_x + (btn_w - icon_size) / 2;
 #ifdef PBL_ROUND
-  btn_up_x -= 12;
-  btn_down_x -= 12;
+  int bar_extra = btn_w;
+  layer_set_frame(s_btn_bar_layer, GRect(btn_x - bar_extra, 0, btn_w + bar_extra, bounds.size.h));
+  icon_x -= 8;
+  btn_up_y -= 4;
+  btn_mid_y -= 4;
+  btn_down_y -= 4;
+#else
+  layer_set_frame(s_btn_bar_layer, GRect(btn_x, 0, btn_w, bounds.size.h));
 #endif
 
-  layer_set_frame(bitmap_layer_get_layer(s_bmp_up_layer), GRect(btn_up_x, btn_up_y, icon_size, icon_size));
-  layer_set_frame(bitmap_layer_get_layer(s_bmp_sel_layer), GRect(btn_x + 5, btn_mid_y, icon_size, icon_size));
-  layer_set_frame(bitmap_layer_get_layer(s_bmp_down_layer), GRect(btn_down_x, btn_down_y, icon_size, icon_size));
+  layer_set_frame(bitmap_layer_get_layer(s_bmp_up_layer), GRect(icon_x, btn_up_y, icon_size, icon_size));
+  layer_set_frame(bitmap_layer_get_layer(s_bmp_sel_layer), GRect(icon_x, btn_mid_y, icon_size, icon_size));
+  layer_set_frame(bitmap_layer_get_layer(s_bmp_down_layer), GRect(icon_x, btn_down_y, icon_size, icon_size));
 }
 
 #ifndef PBL_PLATFORM_APLITE
@@ -368,6 +397,11 @@ static void window_load(Window *window) {
   style_text_layer(s_song_layer);
   layer_add_child(root, text_layer_get_layer(s_song_layer));
 
+  int btn_w = 30;
+  s_btn_bar_layer = layer_create(GRect(bounds.size.w - btn_w, 0, btn_w, bounds.size.h));
+  layer_set_update_proc(s_btn_bar_layer, btn_bar_draw);
+  layer_add_child(root, s_btn_bar_layer);
+
   s_icon_thumbs_up = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_UP);
   s_icon_thumbs_down = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_DOWN);
   s_icon_next = gbitmap_create_with_resource(RESOURCE_ID_ICON_NEXT);
@@ -416,6 +450,7 @@ static void window_unload(Window *window) {
   text_layer_destroy(s_station_layer);
   text_layer_destroy(s_artist_layer);
   text_layer_destroy(s_song_layer);
+  layer_destroy(s_btn_bar_layer);
   bitmap_layer_destroy(s_bmp_up_layer);
   bitmap_layer_destroy(s_bmp_sel_layer);
   bitmap_layer_destroy(s_bmp_down_layer);
