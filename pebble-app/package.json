@@ -1,7 +1,7 @@
 {
   "name": "pandora-remote",
   "author": "gravity_rose",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "keywords": [
     "pebble-app"
   ],
@@ -9,7 +9,7 @@
   "dependencies": {},
   "pebble": {
     "displayName": "Pandora Remote",
-    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "uuid": "87b85f04-54ce-4b5e-8941-14a46c9d3855",
     "sdkVersion": "3",
     "enableMultiJS": false,
     "targetPlatforms": [

@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-#define APP_VERSION "1.5.1"
+#define APP_VERSION "1.5.2"
 
 #define CMD_THUMBS_UP    1
 #define CMD_THUMBS_DOWN  2

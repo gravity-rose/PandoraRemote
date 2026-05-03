@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PebbleCommService extends Service {
 
     private static final String TAG = "PebbleCommService";
-    static final UUID WATCHAPP_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    static final UUID WATCHAPP_UUID = UUID.fromString("87b85f04-54ce-4b5e-8941-14a46c9d3855");
     private static final String PANDORA_PACKAGE = "com.pandora.android";
 
     private static final int KEY_COMMAND = 0;

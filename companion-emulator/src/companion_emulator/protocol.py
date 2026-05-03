@@ -2,7 +2,7 @@ import uuid as _uuid
 
 from libpebble2.services.appmessage import CString, Int32
 
-APP_UUID = _uuid.UUID("a1b2c3d4-e5f6-7890-abcd-ef1234567890")
+APP_UUID = _uuid.UUID("87b85f04-54ce-4b5e-8941-14a46c9d3855")
 
 KEY_COMMAND = 0
 KEY_STATION = 1
