@@ -33,6 +33,12 @@ def discover_ws_url(platform: str = "basalt") -> str:
         )
 
     entry = config[platform]
+    # Handle versioned config: basalt -> "4.9.169" -> pypkjs
+    if "pypkjs" not in entry and "qemu" not in entry:
+        for val in entry.values():
+            if isinstance(val, dict) and ("pypkjs" in val or "qemu" in val):
+                entry = val
+                break
     pypkjs_info = entry.get("pypkjs", {})
     pypkjs_port = pypkjs_info.get("port") if isinstance(pypkjs_info, dict) else pypkjs_info
     if pypkjs_port is None:

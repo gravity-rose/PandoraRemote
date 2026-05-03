@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-#define APP_VERSION "1.4.0"
+#define APP_VERSION "1.5.0"
 
 #define CMD_THUMBS_UP    1
 #define CMD_THUMBS_DOWN  2
@@ -32,6 +32,7 @@ static Layer *s_btn_bar_layer;
 
 static int s_current_screen = 0;
 static bool s_is_playing = false;
+static AppTimer *s_screen_timer;
 
 static char s_station_buf[64];
 static char s_artist_buf[64];
@@ -76,6 +77,24 @@ static void send_command(int cmd) {
 static void update_btn_labels(void);
 static void show_about(void);
 
+static void screen_timer_callback(void *data) {
+  s_screen_timer = NULL;
+  if (s_current_screen != 0 && s_main_window) {
+    s_current_screen = 0;
+    update_btn_labels();
+    text_layer_set_text(s_song_layer, s_song_buf);
+  }
+}
+
+static void reset_screen_timer(void) {
+  if (s_screen_timer) {
+    app_timer_cancel(s_screen_timer);
+  }
+  if (s_current_screen != 0) {
+    s_screen_timer = app_timer_register(15000, screen_timer_callback, NULL);
+  }
+}
+
 static void update_btn_labels(void) {
   if (s_current_screen == 0) {
     bitmap_layer_set_bitmap(s_bmp_up_layer, s_icon_next);
@@ -92,20 +111,16 @@ static void update_btn_labels(void) {
   }
 }
 
-static void show_feedback(const char *msg) {
-  text_layer_set_text(s_song_layer, msg);
-}
-
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   nudge_icon(s_bmp_up_layer);
   if (s_current_screen == 0) {
     send_command(CMD_NEXT);
   } else if (s_current_screen == 1) {
     send_command(CMD_THUMBS_UP);
-    show_feedback("Thumbs Up!");
+    reset_screen_timer();
   } else {
     send_command(CMD_VOLUME_UP);
-    show_feedback("Volume Up");
+    reset_screen_timer();
   }
 }
 
@@ -114,14 +129,13 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   if (s_current_screen == 0) {
     send_command(CMD_PLAY_PAUSE);
     s_is_playing = !s_is_playing;
-    show_feedback(s_is_playing ? "Playing" : "Paused");
     bitmap_layer_set_bitmap(s_bmp_down_layer, s_is_playing ? s_icon_pause : s_icon_play);
   } else if (s_current_screen == 1) {
     send_command(CMD_THUMBS_DOWN);
-    show_feedback("Thumbs Down!");
+    reset_screen_timer();
   } else {
     send_command(CMD_VOLUME_DOWN);
-    show_feedback("Volume Down");
+    reset_screen_timer();
   }
 }
 
@@ -129,9 +143,11 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   if (s_current_screen == 0) {
     s_current_screen = 1;
     update_btn_labels();
+    reset_screen_timer();
   } else if (s_current_screen == 1) {
     s_current_screen = 2;
     update_btn_labels();
+    reset_screen_timer();
   } else {
     show_about();
   }
@@ -142,6 +158,7 @@ static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
     s_current_screen--;
     update_btn_labels();
     text_layer_set_text(s_song_layer, s_song_buf);
+    reset_screen_timer();
   } else {
     window_stack_pop(true);
   }
@@ -443,6 +460,10 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
+  if (s_screen_timer) {
+    app_timer_cancel(s_screen_timer);
+    s_screen_timer = NULL;
+  }
 #ifndef PBL_PLATFORM_APLITE
   unobstructed_area_service_unsubscribe();
 #endif

@@ -61,7 +61,7 @@ def main() -> None:
     state_machine = PandoraStateMachine()
     ui = TerminalUI(state_machine, status="Connecting...")
 
-    live = ui.start()
+    ui.start()
     try:
         if args.qemu_port:
             pebble = connect_qemu(args.qemu_port)

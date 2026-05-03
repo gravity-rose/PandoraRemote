@@ -7,7 +7,7 @@ FEATURES
 - Adjust phone volume from your watch
 - See the current song, artist, and station on your watch
 - Auto-launches when Pandora starts playing
-- Works on all Pebble hardware (Time, Time Steel, Time Round, Pebble 2, Time 2, Core 2 Duo, Core Time)
+- Works on all Pebble hardware except the OG (Time, Time Steel, Time Round, Pebble 2, Time 2, Core 2 Duo, Core Time)
 
 HOW IT WORKS
 
@@ -16,6 +16,11 @@ PandoraRemote has three screens you cycle through with the select button:
 Playback: Skip to the next track or play/pause.
 Rating: Thumbs up or thumbs down the current song.
 Volume: Turn the volume up or down on your phone.
+
+WARNING:
+This is a personal passion project, and frankly, if I don't see a need for a feature, I probably won't add it. If you have a feature request, please submit an issue.  I would strongly encourage you to download Claude Code (or similar) and submit a PR with your proposed changes.  I will review and merge if it looks good.  I am not too interested in adding features that I don't personally find useful, but if you want to add them yourself, I am happy to review and merge.  As you can see from the License, I never intend for this to be a commercial project, so no one can "steal" your work.
+
+This project is open source and licensed under CC BY-NC-SA 4.0. See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.
 
 SETUP
 
