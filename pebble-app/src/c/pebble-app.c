@@ -19,7 +19,6 @@ static TextLayer *s_song_layer;
 static GBitmap *s_icon_thumbs_up;
 static GBitmap *s_icon_thumbs_down;
 static GBitmap *s_icon_next;
-static GBitmap *s_icon_prev;
 static GBitmap *s_icon_play;
 static GBitmap *s_icon_pause;
 static GBitmap *s_icon_ellipsis;
@@ -420,7 +419,6 @@ static void window_load(Window *window) {
   s_icon_thumbs_up = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_UP);
   s_icon_thumbs_down = gbitmap_create_with_resource(RESOURCE_ID_ICON_THUMBS_DOWN);
   s_icon_next = gbitmap_create_with_resource(RESOURCE_ID_ICON_NEXT);
-  s_icon_prev = gbitmap_create_with_resource(RESOURCE_ID_ICON_PREV);
   s_icon_play = gbitmap_create_with_resource(RESOURCE_ID_ICON_PLAY);
   s_icon_pause = gbitmap_create_with_resource(RESOURCE_ID_ICON_PAUSE);
   s_icon_ellipsis = gbitmap_create_with_resource(RESOURCE_ID_ICON_ELLIPSIS);
@@ -476,7 +474,6 @@ static void window_unload(Window *window) {
   gbitmap_destroy(s_icon_thumbs_up);
   gbitmap_destroy(s_icon_thumbs_down);
   gbitmap_destroy(s_icon_next);
-  gbitmap_destroy(s_icon_prev);
   gbitmap_destroy(s_icon_play);
   gbitmap_destroy(s_icon_pause);
   gbitmap_destroy(s_icon_ellipsis);

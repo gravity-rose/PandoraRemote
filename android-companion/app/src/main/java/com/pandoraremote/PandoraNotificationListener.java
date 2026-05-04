@@ -8,7 +8,6 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.getpebble.android.kit.PebbleKit;
 import io.rebble.pebblekit2.client.java.DefaultJavaPebbleSender;
 import io.rebble.pebblekit2.client.java.JavaPebbleSender;
 
